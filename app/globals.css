@@ -2,17 +2,47 @@
 
 :root {
   --background: #F5EEDD;
-  --foreground: #193638;
-  --primary: #164E52;
-  --secondary: #A8C9BE;
-  --accent: #287C78;
-  --card: #FFFFFF;
+  --foreground: #000000;
+  --card: #FFFDF7;
+  --border-soft: #EFE6D0;
+  --placeholder: #C9C4B6;
+
+  --primary: #132441;
+  --primary-foreground: #F5EEDD;
+  --secondary: #BBD3E0;       
+  --accent: #84B3CE;          
+  --highlight: #FEF0B6;       
+  --logo-dark: #3A3C38;      
+  --link: #3A52A4;       
+
+  --action-text: #4A2C1A;
+
+  --badge-lost: #5B4741;      
+  --badge-found: #BBD3E0;     
+  --status-lost: #FF6B6B;
+  --chip-inactive: #E0DFDB;   
   --muted: #64748B;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border-soft: var(--border-soft);
+  --color-placeholder: var(--placeholder);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-highlight: var(--highlight);
+  --color-logo-dark: var(--logo-dark);
+  --color-link: var(--link);
+  --color-action-text: var(--action-text);
+  --color-badge-lost: var(--badge-lost);
+  --color-badge-found: var(--badge-found);
+  --color-status-lost: var(--status-lost);
+  --color-chip-inactive: var(--chip-inactive);
+  --color-muted: var(--muted);
   --font-sans: Arial, Helvetica, sans-serif;
 }
 
