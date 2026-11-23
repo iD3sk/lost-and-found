@@ -43,20 +43,31 @@
   --color-status-lost: var(--status-lost);
   --color-chip-inactive: var(--chip-inactive);
   --color-muted: var(--muted);
-  --font-sans: Arial, Helvetica, sans-serif;
-}
-
-* {
-  box-sizing: border-box;
+  --font-sans: var(--font-inter), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-protest), Impact, sans-serif;  /* judul tebal */
+  --font-logo: var(--font-jeju), cursive;                   /* tulisan logo */
 }
 
 html, body {
   margin: 0;
   min-height: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  min-height: 100dvh;           /* dvh: tidak terpotong address bar HP */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
 }
+
+/* Cegah iOS Safari zoom otomatis saat fokus ke input */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Bottom nav & tombol bawah: sisakan ruang untuk home bar iPhone */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-top    { padding-top: env(safe-area-inset-top); }
