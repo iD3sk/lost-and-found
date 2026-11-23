@@ -71,3 +71,7 @@ input, select, textarea {
 /* Bottom nav & tombol bawah: sisakan ruang untuk home bar iPhone */
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 .safe-top    { padding-top: env(safe-area-inset-top); }
+
+.font-jeju {
+  font-family: 'Jeju Hallasan', cursive, sans-serif;
+}

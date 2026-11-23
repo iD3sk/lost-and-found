@@ -1,12 +1,7 @@
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import BottomNav from "@/components/BottomNav";
-import ReportCard, { type ReportCardProps } from "@/components/ReportCard";
-
-// TODO: ganti dengan data asli dari API/database
-const RECENT: ReportCardProps[] = [
-  { id: 1, title: "Motor pink", location: "Pacil Gedlam", type: "lost", status: "still_lost" },
-];
+import ReportCard from "@/components/ReportCard";
+import { getRecentReports } from "@/lib/mock-data";
 
 function SadFace() {
   return (
@@ -53,9 +48,11 @@ function ActionCard({
 }
 
 export default function HomePage() {
+  const recent = getRecentReports(4);
+
   return (
     <>
-      <PageHeader />
+      <PageHeader title="Lost & Found" brand />
 
       <main className="mx-auto w-full max-w-md px-4 pb-28 pt-4 md:max-w-3xl">
         <h2 className="text-3xl font-bold leading-tight">
@@ -80,13 +77,11 @@ export default function HomePage() {
         </div>
 
         <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {RECENT.slice(0, 4).map((r) => (
-            <ReportCard key={r.id} {...r} />
+          {recent.map((r) => (
+            <ReportCard key={r.id} report={r} />
           ))}
         </div>
       </main>
-      <BottomNav />
     </>
-    
   );
 }
