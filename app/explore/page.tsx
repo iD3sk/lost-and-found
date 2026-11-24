@@ -6,7 +6,7 @@ import { REPORTS } from "@/lib/mock-data";
 export default function ExplorePage() {
   return (
     <>
-      <PageHeader title="Explore" backHref="/" />
+      <PageHeader title="Explore" backHref="/home" />
       <ExploreView reports={REPORTS} />
       <BottomNav />
     </>

@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Save user registration data later
-    router.push('/');
+    router.push('/home');
   };
 
   return (
@@ -148,7 +148,7 @@ export default function RegisterPage() {
           Already have an account?{' '}
           <button
             type="button"
-            onClick={() => router.push('/login/form')}
+            onClick={() => router.push('/login-regis-form')}
             className="text-link font-semibold underline cursor-pointer"
           >
             Login

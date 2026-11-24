@@ -29,7 +29,7 @@ export default function MyReportsPage() {
 
   return (
     <div className="min-h-dvh bg-background pb-28 flex flex-col">
-      <PageHeader title="My Reports" backHref="/" />
+      <PageHeader title="My Reports" backHref="/home" />
 
       <main className="flex-1 px-4 pt-5 max-w-md md:max-w-3xl w-full mx-auto">
         {/* Filter Chips */}

@@ -13,7 +13,7 @@ export default function NewReportPage({
   searchParams: SearchParams;
 }) {
   return (
-    <Suspense fallback={<PageHeader title="New Report" backHref="/" />}>
+    <Suspense fallback={<PageHeader title="New Report" backHref="/home" />}>
       <NewReportContent searchParams={searchParams} />
     </Suspense>
   );
@@ -28,7 +28,7 @@ async function NewReportContent({ searchParams }: { searchParams: SearchParams }
       <>
         <PageHeader
           title={type === "lost" ? "Lost Form" : "Found Form"}
-          backHref="/"
+          backHref="/home"
         />
         <ReportForm type={type} />
       </>
@@ -38,7 +38,7 @@ async function NewReportContent({ searchParams }: { searchParams: SearchParams }
   // Tanpa ?type (datang dari tombol +) -> pilih dulu
   return (
     <>
-      <PageHeader title="New Report" backHref="/" />
+      <PageHeader title="New Report" backHref="/home" />
       <main className="mx-auto w-full max-w-md px-4 pt-6 md:max-w-3xl">
         <h2 className="text-3xl font-bold leading-tight">
           What would you like to report?

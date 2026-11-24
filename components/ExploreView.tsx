@@ -147,7 +147,7 @@ export default function ExploreView({ reports }: { reports: Report[] }) {
       {filtered.length > 0 ? (
         <div className="mt-2 grid grid-cols-2 gap-3 md:grid-cols-4">
           {filtered.map((r) => (
-            <ReportCard report={r} />
+            <ReportCard key={r.id} report={r} />
           ))}
         </div>
       ) : (

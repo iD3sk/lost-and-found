@@ -1,89 +1,81 @@
-import Link from "next/link";
-import PageHeader from "@/components/PageHeader";
-import ReportCard from "@/components/ReportCard";
-import { getRecentReports } from "@/lib/mock-data";
-import BottomNav from "@/components/BottomNav"
+'use client';
 
-function SadFace() {
-  return (
-    <svg viewBox="0 0 100 100" className="h-24 w-24" aria-hidden="true">
-      <circle cx="50" cy="50" r="46" fill="#FFD959" stroke="#4A2C1A" strokeWidth="3" />
-      <circle cx="34" cy="42" r="5" fill="#4A2C1A" />
-      <circle cx="66" cy="42" r="5" fill="#4A2C1A" />
-      <path d="M42 66 L50 59 L58 66" fill="none" stroke="#4A2C1A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+import { useRouter } from 'next/navigation';
 
-function HappyFace() {
-  return (
-    <svg viewBox="0 0 100 100" className="h-24 w-24" aria-hidden="true">
-      <circle cx="50" cy="50" r="46" fill="#FFD959" stroke="#4A2C1A" strokeWidth="3" />
-      <circle cx="34" cy="40" r="5" fill="#4A2C1A" />
-      <circle cx="66" cy="40" r="5" fill="#4A2C1A" />
-      <path d="M32 58 H68 Q66 74 50 74 Q34 74 32 58 Z" fill="#FFFFFF" stroke="#4A2C1A" strokeWidth="3" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ActionCard({
-  href,
-  label,
-  children,
-}: {
-  href: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex flex-col items-center rounded-3xl border-4 border-logo-dark bg-secondary px-2 pb-3 pt-4 text-center shadow-lg active:scale-[0.97]"
-    >
-      {children}
-      <span className="mt-1 font-display text-2xl leading-tight text-action-text">
-        {label}
-      </span>
-    </Link>
-  );
-}
-
-export default function HomePage() {
-  const recent = getRecentReports(4);
+export default function LoginPage() {
+  const router = useRouter();
 
   return (
-    <>
-      <PageHeader title="Lost & Found" brand />
+    <main className="min-h-dvh bg-background flex flex-col justify-center items-center px-9 gap-12">
+      {/* Top Section: Magnifying Glass Logo + "Lost & Found" */}
+      <div className="flex items-center gap-3">
+        <svg
+          width="110"
+          height="110"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Handle */}
+          <line
+            x1="42"
+            y1="78"
+            x2="16"
+            y2="104"
+            stroke="var(--logo-dark)"
+            strokeWidth="12"
+            strokeLinecap="round"
+          />
+          {/* Lens Circle */}
+          <circle
+            cx="68"
+            cy="52"
+            r="34"
+            fill="var(--secondary)"
+            stroke="var(--logo-dark)"
+            strokeWidth="8"
+          />
+          {/* Yellow Starburst */}
+          <polygon
+            points="68,28 73,44 90,41 78,52 88,66 72,60 66,76 62,59 46,64 57,51 47,38 63,43"
+            fill="var(--highlight)"
+          />
+        </svg>
 
-      <main className="mx-auto w-full max-w-md px-4 pb-28 pt-4 md:max-w-3xl">
-        <h2 className="text-3xl font-bold leading-tight">
-          What can I do for you today?
-        </h2>
+        <h1 className="font-jeju text-[32px] leading-tight text-logo-dark">
+          Lost &amp;
+          <br />
+          Found
+        </h1>
+      </div>
 
-        {/* Langsung ke form: type dibawa lewat query string */}
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <ActionCard href="/reports/new?type=lost" label="I lost something">
-            <SadFace />
-          </ActionCard>
-          <ActionCard href="/reports/new?type=found" label="I found something">
-            <HappyFace />
-          </ActionCard>
-        </div>
+      {/* Bottom Section: Action Buttons */}
+      <div className="w-full max-w-[240px] flex flex-col items-center gap-3.5">
+        <button
+          onClick={() => router.push('/home')}
+          className="w-full py-3.5 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-medium cursor-pointer active:scale-98 transition"
+        >
+          Login with SSO
+        </button>
 
-        <div className="mt-6 flex items-baseline justify-between">
-          <h2 className="text-xl font-bold">Recent Reports</h2>
-          <Link href="/explore" className="text-sm font-semibold text-link">
-            View all
-          </Link>
-        </div>
+        <button
+          onClick={() => router.push('/login-regis-form')}
+          className="w-full py-3.5 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-medium cursor-pointer active:scale-98 transition"
+        >
+          Login
+        </button>
 
-        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {recent.map((r) => (
-            <ReportCard report={r} />
-          ))}
-        </div>
-      </main>
-      <BottomNav />
-    </>
+        <p className="mt-1.5 -mb-1.5 text-xs text-link font-medium">
+          Don&apos;t have an account yet?
+        </p>
+
+        <button
+          onClick={() => router.push('/register')}
+          className="w-full py-3.5 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-medium cursor-pointer active:scale-98 transition"
+        >
+          Register
+        </button>
+      </div>
+    </main>
   );
 }

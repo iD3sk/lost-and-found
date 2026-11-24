@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Archive, Home, Plus, Search, User } from "lucide-react";
 
 const LEFT = [
-  { href: "/", label: "Home", Icon: Home },
+  { href: "/home", label: "Home", Icon: Home },
   { href: "/explore", label: "Explore", Icon: Search },
 ];
 const RIGHT = [

@@ -21,7 +21,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-dvh bg-background pb-28 flex flex-col">
       {/* Your friend's PageHeader with Lucide ArrowLeft & Bell icons */}
-      <PageHeader title="My Profile" backHref="/" />
+      <PageHeader title="My Profile" backHref="/home" />
 
       {/* Main Content */}
       <main className="flex-1 px-7 pt-6 flex flex-col items-center max-w-md md:max-w-3xl w-full mx-auto">
