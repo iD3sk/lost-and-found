@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
-import BottomNav from "@/components/BottomNav";
+import BottomNav from "@/components/BottomNav"; // hapus kalau BottomNav sudah ada di layout.tsx
 import ReportCard from "@/components/ReportCard";
 import { REPORTS } from "@/lib/mock-data";
+import { Bot } from "lucide-react";
 
 type FilterTab = "ALL" | "lost" | "found" | "RESOLVED";
 
@@ -19,7 +20,7 @@ const TABS: { key: FilterTab; label: string }[] = [
 export default function MyReportsPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>("ALL");
 
-  // Placeholder: until auth/backend is connected, show a subset or all mock reports as "user's reports"
+  // Placeholder: sebelum auth/backend tersambung, semua mock report dianggap milik user
   const myReports = REPORTS.filter((report) => {
     if (activeTab === "ALL") return true;
     if (activeTab === "RESOLVED") return report.status === "RESOLVED";
@@ -38,6 +39,8 @@ export default function MyReportsPage() {
             return (
               <button
                 key={tab.key}
+                type="button"
+                aria-pressed={active}
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer shrink-0 ${
                   active
@@ -69,9 +72,9 @@ export default function MyReportsPage() {
             </Link>
           </div>
         )}
+        <BottomNav />
       </main>
-
-      <BottomNav />
+      
     </div>
   );
 }

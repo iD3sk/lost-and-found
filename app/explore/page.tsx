@@ -1,22 +1,14 @@
-import ReportCard from "@/components/ReportCard";
+import PageHeader from "@/components/PageHeader";
+import ExploreView from "@/components/ExploreView";
 import BottomNav from "@/components/BottomNav";
-import Header from "@/components/PageHeader";
-import { Bot } from "lucide-react";
+import { REPORTS } from "@/lib/mock-data";
 
 export default function ExplorePage() {
   return (
-    <main className="mx-auto w-full max-w-md px-4 pb-28 pt-4 md:max-w-3xl">
-      <Header />
-      <h1 className="text-xl font-bold">Explore</h1>
-      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <ReportCard
-          id={1}
-          title="Motor pink"
-          location="Pacil Gedlam"
-          type="lost"
-        />
-      </div>
+    <>
+      <PageHeader title="Explore" backHref="/" />
+      <ExploreView reports={REPORTS} />
       <BottomNav />
-    </main>
+    </>
   );
 }

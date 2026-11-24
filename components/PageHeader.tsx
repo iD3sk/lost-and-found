@@ -35,9 +35,13 @@ export default function PageHeader({ title, backHref, brand }: PageHeaderProps) 
             <ArrowLeft size={28} aria-hidden="true" />
           </Link>
         ) : brand ? (
-          <span className="flex h-11 w-11 items-center justify-center">
+          <Link
+            href="/explore"
+            aria-label="Explore"
+            className="flex h-11 w-11 items-center justify-center"
+          >
             <LogoMark />
-          </span>
+          </Link>
         ) : (
           <span />
         )}

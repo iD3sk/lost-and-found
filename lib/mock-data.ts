@@ -10,12 +10,13 @@ export interface Report {
   itemName: string;
   category: string;
   description: string;
-  location: string; // nama CAMPUS_LOCATION
+  locations: string[]; // nama CAMPUS_LOCATION (LOST: maks 3, FOUND: 1)
   locationDetail?: string;
   contact: string;
   status: ReportStatus;
-  imageUrl: string | null;
-  eventDate: string; // lost: perkiraan waktu hilang, found: waktu ditemukan (ISO)
+  images: string[]; // URL foto (LOST: 0-10, FOUND: minimal 1 di form)
+  eventDate: string; // lost: perkiraan awal hilang, found: waktu ditemukan (ISO)
+  eventUntil?: string; // khusus LOST: perkiraan akhir waktu hilang (ISO)
   currentPosition?: string; // khusus FOUND
   createdAt: string; // ISO
 }
@@ -58,12 +59,13 @@ export const REPORTS: Report[] = [
     category: "Vehicles",
     description:
       "Vespa warna pink dengan motif polkadot putih dan helm senada di jok. Terakhir diparkir di dekat pintu masuk Gedlam sebelum kelas siang dimulai.",
-    location: "Pacil Gedlam",
+    locations: ["Pacil Gedlam", "Parkiran"],
     locationDetail: "Dekat pintu masuk",
     contact: "LINE: motorpink_owner",
     status: "OPEN",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-20T06:30:00.000Z",
+    eventUntil: "2026-11-20T09:00:00.000Z",
     createdAt: "2026-11-20T09:15:00.000Z",
   },
   {
@@ -73,11 +75,11 @@ export const REPORTS: Report[] = [
     category: "Documents",
     description:
       "Menemukan kartu tanda mahasiswa tergeletak di meja dekat jendela. Sudah dititipkan sementara dan bisa diambil dengan menunjukkan identitas yang sesuai.",
-    location: "Perpustakaan",
+    locations: ["Perpustakaan"],
     locationDetail: "Lantai 2, dekat jendela",
     contact: "WhatsApp: 081234567890",
     status: "OPEN",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-21T03:00:00.000Z",
     currentPosition: "Dititipkan di meja petugas perpustakaan",
     createdAt: "2026-11-21T04:10:00.000Z",
@@ -89,10 +91,10 @@ export const REPORTS: Report[] = [
     category: "Electronics",
     description:
       "Case AirPods hitam dengan stiker kecil bergambar bintang di bagian belakang. Kemungkinan tertinggal saat belajar kelompok di sekitar kantin.",
-    location: "Kantin",
+    locations: ["Kantin"],
     contact: "WhatsApp: 081298765432",
     status: "CLAIM_PENDING",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-19T08:00:00.000Z",
     createdAt: "2026-11-19T11:00:00.000Z",
   },
@@ -103,11 +105,11 @@ export const REPORTS: Report[] = [
     category: "Bottles",
     description:
       "Tumbler berwarna biru dongker dengan tutup hitam ditemukan di ruangan A206 setelah kelas berakhir. Masih berisi sedikit air dan dalam kondisi baik.",
-    location: "Gedung A",
+    locations: ["Gedung A"],
     locationDetail: "Ruang A206",
     contact: "LINE: finder_a206",
     status: "OPEN",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-22T05:30:00.000Z",
     currentPosition: "Dibawa ke sekretariat",
     createdAt: "2026-11-22T06:00:00.000Z",
@@ -119,10 +121,10 @@ export const REPORTS: Report[] = [
     category: "Electronics",
     description:
       "Charger laptop merk Asus warna hitam dengan kabel yang dililit karet gelang oranye. Perasaan tadi masih ada di sekre sebelum rapat dimulai.",
-    location: "Sekre",
+    locations: ["Sekre"],
     contact: "WhatsApp: 081311112222",
     status: "RESOLVED",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-17T10:00:00.000Z",
     createdAt: "2026-11-17T12:00:00.000Z",
   },
@@ -133,10 +135,10 @@ export const REPORTS: Report[] = [
     category: "Clothing",
     description:
       "Jaket jeans ukuran M warna biru tua ditemukan tergantung di kursi masjid setelah salat Jumat. Ada tambalan kecil berbentuk bendera di lengan kiri.",
-    location: "Masjid",
+    locations: ["Masjid"],
     contact: "LINE: jaket_masjid",
     status: "OPEN",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-20T06:15:00.000Z",
     currentPosition: "Dititipkan ke marbot masjid",
     createdAt: "2026-11-20T07:00:00.000Z",
@@ -148,10 +150,10 @@ export const REPORTS: Report[] = [
     category: "Bags",
     description:
       "Ransel hijau army merk Eiger berisi buku catatan dan kotak pensil. Hilang di area parkiran saat hujan deras sehingga sempat dipindahkan orang lain.",
-    location: "Parkiran",
+    locations: ["Parkiran"],
     contact: "WhatsApp: 081355556666",
     status: "OPEN",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-18T09:00:00.000Z",
     createdAt: "2026-11-18T10:30:00.000Z",
   },
@@ -162,11 +164,11 @@ export const REPORTS: Report[] = [
     category: "Accessories",
     description:
       "Kacamata dengan bingkai hitam tebal dan lensa minus ditemukan di atas rak buku lantai satu. Terdapat goresan kecil di lensa sebelah kanan.",
-    location: "Perpustakaan",
+    locations: ["Perpustakaan"],
     locationDetail: "Lantai 1, rak buku",
     contact: "WhatsApp: 081377778888",
     status: "CLAIM_PENDING",
-    imageUrl: null,
+    images: [],
     eventDate: "2026-11-21T08:00:00.000Z",
     currentPosition: "Dititipkan di meja petugas perpustakaan",
     createdAt: "2026-11-21T09:00:00.000Z",

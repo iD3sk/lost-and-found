@@ -18,6 +18,8 @@ export function TypeBadge({
   );
 }
 
+// Label status: OPEN -> Still Lost, CLAIM_PENDING -> Claim Pending, RESOLVED -> Found
+// (sama seperti pill "Still Lost" di Figma, baik untuk laporan lost maupun found)
 export function StatusPill({
   report,
   className = "",
@@ -29,16 +31,13 @@ export function StatusPill({
   let style: string;
 
   if (report.status === "RESOLVED") {
-    label = "Resolved";
+    label = "Found";
     style = "bg-accent text-primary";
   } else if (report.status === "CLAIM_PENDING") {
     label = "Claim Pending";
     style = "bg-highlight text-primary";
-  } else if (report.type === "lost") {
-    label = "Still Lost";
-    style = "bg-status-lost text-white";
   } else {
-    label = "Unclaimed";
+    label = "Still Lost";
     style = "bg-status-lost text-white";
   }
 

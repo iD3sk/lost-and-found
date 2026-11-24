@@ -2,6 +2,7 @@ import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import ReportCard from "@/components/ReportCard";
 import { getRecentReports } from "@/lib/mock-data";
+import BottomNav from "@/components/BottomNav"
 
 function SadFace() {
   return (
@@ -78,10 +79,11 @@ export default function HomePage() {
 
         <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
           {recent.map((r) => (
-            <ReportCard key={r.id} report={r} />
+            <ReportCard report={r} />
           ))}
         </div>
       </main>
+      <BottomNav />
     </>
   );
 }

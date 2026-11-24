@@ -3,17 +3,21 @@ import { MapPin } from "lucide-react";
 import type { Report } from "@/lib/mock-data";
 import { StatusPill, TypeBadge } from "@/components/ReportBadges";
 
+// Pemakaian: <ReportCard report={r} />  (BUKAN id/title/location terpisah)
 export default function ReportCard({ report }: { report: Report }) {
+  const cover = report.images[0];
+  const extra = report.locations.length - 1;
+
   return (
     <Link
       href={`/reports/${report.id}`}
       className="flex flex-col rounded-3xl bg-card p-3 shadow-md active:scale-[0.98]"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-border-soft">
-        {report.imageUrl ? (
+        {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={report.imageUrl}
+            src={cover}
             alt={report.itemName}
             className="h-full w-full object-cover"
             loading="lazy"
@@ -26,7 +30,10 @@ export default function ReportCard({ report }: { report: Report }) {
 
       <p className="mt-0.5 flex items-center gap-1 text-sm">
         <MapPin size={14} aria-hidden="true" className="shrink-0" />
-        <span className="truncate">{report.location}</span>
+        <span className="truncate">
+          {report.locations[0]}
+          {extra > 0 ? ` +${extra}` : ""}
+        </span>
       </p>
 
       <StatusPill report={report} className="mt-2" />
