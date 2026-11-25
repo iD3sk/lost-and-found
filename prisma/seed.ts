@@ -143,9 +143,13 @@ async function seed() {
       ...areas.map((name) => ({ id: stableId(name), name, type: "AREA" as const })),
       ...publicBuildings.map((name) => ({ id: stableId(name), name, type: "BUILDING" as const })),
     ];
-    await db.$transaction(locations.map(({ id, name, type }) =>
-      db.campusLocation.upsert({ where: { id }, create: { id, name, type }, update: { name, type } }),
-    ));
+    for (const { id, name, type } of locations) {
+      await db.campusLocation.upsert({
+        where: { id },
+        create: { id, name, type },
+        update: { name, type },
+      });
+    }
 
     const npm = process.env.NODE_ENV !== "production" && process.env.DEV_AUTH_TOKEN
       ? process.env.DEV_AUTH_NPM
