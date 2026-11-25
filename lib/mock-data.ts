@@ -41,15 +41,23 @@ export const CATEGORIES = [
   "Others",
 ];
 
-export const LOCATIONS = [
-  "Pacil Gedlam",
-  "Gedung A",
-  "Perpustakaan",
-  "Kantin",
-  "Masjid",
-  "Sekre",
-  "Parkiran",
+interface CampusLocation {
+  id: string;
+  name: string;
+  type: "AREA" | "BUILDING";
+}
+
+export const CAMPUS_LOCATIONS: CampusLocation[] = [
+  { id: "42a4941b-6d0f-4139-8845-2f86dc660cc7", name: "Pacil Gedlam", type: "BUILDING" },
+  { id: "9c3c2c1c-2610-47b8-a8d5-d1cb87818dc4", name: "Gedung A", type: "BUILDING" },
+  { id: "8a078bbf-4c35-4281-b7fa-aa7329e8740c", name: "Perpustakaan", type: "BUILDING" },
+  { id: "6f45baed-0b06-47b2-bf1e-a6022924cfd3", name: "Kantin", type: "AREA" },
+  { id: "a8ca4df3-cb73-4a79-98cf-f2e2da0dcb27", name: "Masjid", type: "BUILDING" },
+  { id: "93911355-d64e-4309-a60b-e70edbb21127", name: "Sekre", type: "AREA" },
+  { id: "dc269b55-f4de-4900-97c8-e30ed525a6ac", name: "Parkiran", type: "AREA" },
 ];
+
+export const LOCATIONS = CAMPUS_LOCATIONS.map(({ name }) => name);
 
 export const REPORTS: Report[] = [
   {

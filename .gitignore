@@ -19,6 +19,8 @@
 
 # production
 /build
+/generated/prisma/
+/.report-uploads/
 
 # misc
 .DS_Store

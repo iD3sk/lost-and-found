@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ReportType {
+  LOST
+  FOUND
+}
+
+enum ReportStatus {
+  OPEN
+  CLAIM_PENDING
+  RESOLVED
+}
+
+// Nilai sementara mengikuti kategori yang dipakai frontend.
+enum ReportCategory {
+  ELECTRONICS
+  ACCESSORIES
+  DOCUMENTS
+  BAGS
+  CLOTHING
+  BOTTLES
+  VEHICLES
+  OTHERS
+}
+
+enum CampusLocationType {
+  AREA
+  BUILDING
+}
+
+model User {
+  npm           String         @id
+  name          String
+  fakultas      String
+  major         String
+  contact       String?
+  reports       Report[]
+  comments      Comment[]
+  notifications Notification[]
+
+  @@map("USER")
+}
+
+model Report {
+  id               String         @id @default(uuid()) @db.Uuid
+  userNpm          String
+  reportLocationId String         @unique @map("report_location") @db.Uuid
+  type             ReportType
+  itemName         String
+  category         ReportCategory
+  description      String
+  contact          String
+  status           ReportStatus   @default(OPEN)
+  // Validasi field khusus LOST dan FOUND dilakukan saat menyimpan laporan.
+  lostFrom         DateTime?
+  lostUntil        DateTime?
+  foundDate        DateTime?      @db.Date
+  foundTime        DateTime?      @db.Time(0)
+  currentPosition  String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  resolvedAt       DateTime?
+  user             User           @relation(fields: [userNpm], references: [npm])
+  location         Location       @relation(fields: [reportLocationId], references: [id])
+  images           ReportImage[]
+  comments         Comment[]
+  notifications    Notification[]
+
+  @@map("REPORT")
+}
+
+model ReportImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  reportId  String   @db.Uuid
+  imageUrl  String
+  createdAt DateTime @default(now())
+  report    Report   @relation(fields: [reportId], references: [id])
+
+  @@map("REPORT_IMAGE")
+}
+
+model Location {
+  id               String         @id @default(uuid()) @db.Uuid
+  campusLocationId String         @map("location_id") @db.Uuid
+  locationDetail   String?        @map("location_detail")
+  latitude         Decimal?       @db.Decimal(9, 6)
+  longitude        Decimal?       @db.Decimal(9, 6)
+  campusLocation   CampusLocation @relation(fields: [campusLocationId], references: [id])
+  report           Report?
+
+  @@map("LOCATION")
+}
+
+model CampusLocation {
+  id        String             @id @default(uuid()) @db.Uuid
+  name      String
+  type      CampusLocationType
+  locations Location[]
+
+  @@map("CAMPUS_LOCATION")
+}
+
+model Comment {
+  id        String   @id @default(uuid()) @db.Uuid
+  reportId  String   @db.Uuid
+  userNpm   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  report    Report   @relation(fields: [reportId], references: [id])
+  user      User     @relation(fields: [userNpm], references: [npm])
+
+  @@map("COMMENT")
+}
+
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  userNpm   String
+  reportId  String    @db.Uuid
+  message   String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userNpm], references: [npm])
+  report    Report    @relation(fields: [reportId], references: [id])
+
+  @@map("NOTIFICATION")
+}
