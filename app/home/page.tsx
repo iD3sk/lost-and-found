@@ -4,10 +4,11 @@ import PageHeader from "@/components/PageHeader";
 import ReportCard from "@/components/ReportCard";
 import BottomNav from "@/components/BottomNav";
 import { listReportViews } from "@/lib/server/report-views";
+import "./home.css";
 
 function SadFace() {
   return (
-    <svg viewBox="0 0 100 100" className="h-24 w-24" aria-hidden="true">
+    <svg viewBox="0 0 100 100" className="homeIllustration h-24 w-24" aria-hidden="true">
       <circle cx="50" cy="50" r="46" fill="#FFD959" stroke="#4A2C1A" strokeWidth="3" />
       <circle cx="34" cy="42" r="5" fill="#4A2C1A" />
       <circle cx="66" cy="42" r="5" fill="#4A2C1A" />
@@ -18,7 +19,7 @@ function SadFace() {
 
 function HappyFace() {
   return (
-    <svg viewBox="0 0 100 100" className="h-24 w-24" aria-hidden="true">
+    <svg viewBox="0 0 100 100" className="homeIllustration h-24 w-24" aria-hidden="true">
       <circle cx="50" cy="50" r="46" fill="#FFD959" stroke="#4A2C1A" strokeWidth="3" />
       <circle cx="34" cy="40" r="5" fill="#4A2C1A" />
       <circle cx="66" cy="40" r="5" fill="#4A2C1A" />
@@ -39,7 +40,7 @@ function ActionCard({
   return (
     <Link
       href={href}
-      className="flex flex-col items-center rounded-3xl border-4 border-logo-dark bg-secondary px-2 pb-3 pt-4 text-center shadow-lg active:scale-[0.97]"
+      className="homeAction flex flex-col items-center rounded-3xl border-4 border-logo-dark bg-secondary px-2 pb-3 pt-4 text-center shadow-lg"
     >
       {children}
       <span className="mt-1 font-display text-2xl leading-tight text-action-text">

@@ -75,3 +75,62 @@ input, select, textarea {
 .font-jeju {
   font-family: 'Jeju Hallasan', cursive, sans-serif;
 }
+
+/* Shared depth and interaction for report cards and bottom navigation. */
+.reportCard {
+  box-shadow: 0 4px 0 #d8cfbc, 0 8px 14px -7px #4a2c1a66;
+}
+
+.bottomNavAdd {
+  box-shadow: 0 4px 8px -4px #13244180;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reportCard,
+  .bottomNavItem,
+  .bottomNavAdd {
+    transition: transform 180ms ease-out, translate 180ms ease-out, scale 180ms ease-out, box-shadow 180ms ease-out, opacity 180ms ease-out;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .reportCard:hover {
+      translate: 0 -2px;
+    }
+
+    .bottomNavItem:hover {
+      transform: translateY(-2px);
+    }
+
+    .bottomNavAdd:hover {
+      transform: translateY(-2px);
+    }
+
+    .reportCard:hover {
+      box-shadow: 0 6px 0 #d8cfbc, 0 12px 18px -7px #4a2c1a66;
+    }
+
+    .bottomNavItem:hover {
+      opacity: 1;
+    }
+
+  }
+
+  .reportCard:active {
+    translate: 0 2px;
+    scale: 0.98;
+  }
+
+  .bottomNavItem:active {
+    transform: translateY(2px);
+    scale: 0.98;
+  }
+
+  .bottomNavAdd:active {
+    transform: translateY(2px);
+  }
+
+  .reportCard:active {
+    box-shadow: 0 2px 0 #d8cfbc, 0 4px 8px -6px #4a2c1a66;
+  }
+
+}

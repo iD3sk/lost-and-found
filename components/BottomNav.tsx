@@ -33,7 +33,7 @@ function NavItem({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold transition-opacity ${
+      className={`bottomNavItem flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold transition-opacity ${
         active ? "opacity-100" : "opacity-70"
       }`}
     >
@@ -51,7 +51,7 @@ export default function BottomNav() {
       aria-label="Navigasi utama"
       className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md md:max-w-3xl"
     >
-      <div className="relative flex items-end rounded-t-3xl bg-primary px-2 pt-3 text-primary-foreground safe-bottom">
+      <div className="bottomNavBar relative flex items-end rounded-t-3xl bg-primary px-2 pt-3 text-primary-foreground safe-bottom">
         {LEFT.map((item) => (
           <NavItem key={item.href} {...item} active={isActive(pathname, item.href)} />
         ))}
@@ -67,7 +67,8 @@ export default function BottomNav() {
         <Link
           href={ADD_HREF}
           aria-label="Buat laporan baru"
-          className="absolute left-1/2 top-0 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-background bg-[#D9D9D9] text-primary shadow-md active:scale-95"
+          className="bottomNavAdd absolute left-1/2 top-0 flex h-16 w-16 items-center justify-center rounded-full border-4 border-background bg-[#D9D9D9] text-primary"
+          style={{ translate: "-50% -50%" }}
         >
           <Plus size={36} strokeWidth={3} aria-hidden="true" />
         </Link>

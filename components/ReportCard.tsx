@@ -11,7 +11,7 @@ export default function ReportCard({ report }: { report: Report }) {
   return (
     <Link
       href={`/reports/${report.id}`}
-      className="flex flex-col rounded-3xl bg-card p-3 shadow-md active:scale-[0.98]"
+      className="reportCard flex flex-col rounded-3xl bg-card p-3"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-border-soft">
         {cover ? (

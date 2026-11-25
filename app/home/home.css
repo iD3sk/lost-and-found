@@ -1,0 +1,62 @@
+.homeAction {
+  box-shadow: 0 5px 0 #4a2c1a, 0 10px 16px -8px #4a2c1a80;
+}
+
+.homeIllustration {
+  filter: drop-shadow(0 4px 2px #4a2c1a55);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .homeAction {
+    transition: translate 180ms ease-out, scale 180ms ease-out, box-shadow 180ms ease-out;
+  }
+
+  .homeIllustration {
+    animation: home-illustration-enter 340ms ease-out backwards;
+    transition: transform 220ms ease-out;
+  }
+
+  .homeAction + .homeAction .homeIllustration {
+    animation-delay: 65ms;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .homeAction:hover {
+      translate: 0 -2px;
+    }
+
+    .homeAction:hover {
+      box-shadow: 0 7px 0 #4a2c1a, 0 14px 18px -8px #4a2c1a80;
+    }
+
+    .homeAction:hover .homeIllustration {
+      transform: translateY(-3px);
+    }
+  }
+
+  .homeAction:active {
+    translate: 0 2px;
+    scale: 0.97;
+  }
+
+  .homeAction:active {
+    box-shadow: 0 2px 0 #4a2c1a, 0 5px 10px -6px #4a2c1a80;
+  }
+
+  .homeAction:active .homeIllustration {
+    transform: none;
+  }
+
+  @keyframes home-illustration-enter {
+    from {
+      opacity: 0;
+      transform: translateY(7px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
