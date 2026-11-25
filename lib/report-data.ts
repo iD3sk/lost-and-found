@@ -25,6 +25,13 @@ export interface Report {
   createdAt: string;
 }
 
+export interface ReportComment {
+  id: string;
+  content: string;
+  createdAt: string;
+  user: { name: string };
+}
+
 export interface AppNotification {
   id: string;
   reportId: string;

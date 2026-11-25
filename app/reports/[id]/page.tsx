@@ -5,8 +5,9 @@ import { Calendar, MapPin, MessageCircle, Package, Pencil } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { StatusPill, TypeBadge } from "@/components/ReportBadges";
 import { formatDate, formatDateTime } from "@/lib/report-data";
+import ReportComments from "@/components/ReportComments";
 import { browserUser } from "@/lib/server/auth/session";
-import { findReportView } from "@/lib/server/report-views";
+import { findReportView, reportComments } from "@/lib/server/report-views";
 
 type Params = Promise<{ id: string }>;
 
@@ -43,6 +44,7 @@ async function ReportDetail({ params }: { params: Params }) {
   const { id } = await params;
   const [report, user] = await Promise.all([findReportView(id), browserUser()]);
   if (!report) notFound();
+  const comments = await reportComments(report.id);
 
   const isLost = report.type === "lost";
 
@@ -122,6 +124,7 @@ async function ReportDetail({ params }: { params: Params }) {
             Edit report
           </Link>
         )}
+        <ReportComments key={report.id} reportId={report.id} comments={comments} signedIn={Boolean(user)} />
       </main>
     </>
   );

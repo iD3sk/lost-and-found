@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import type { Prisma } from "@/generated/prisma/client";
-import type { AppNotification, Report } from "@/lib/report-data";
+import type { AppNotification, Report, ReportComment } from "@/lib/report-data";
 import { getDb } from "./db";
 import { reportRelations } from "./reports";
 
@@ -50,6 +50,15 @@ export async function findReportView(id: string) {
   await connection();
   const row = await getDb().report.findUnique({ where: { id }, include: reportRelations });
   return row ? { ...reportView(row), ownerNpm: row.userNpm } : null;
+}
+
+export async function reportComments(reportId: string): Promise<ReportComment[]> {
+  const comments = await getDb().comment.findMany({
+    where: { reportId },
+    select: { id: true, content: true, createdAt: true, user: { select: { name: true } } },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+  });
+  return comments.map((comment) => ({ ...comment, createdAt: comment.createdAt.toISOString() }));
 }
 
 export async function campusLocationOptions() {
