@@ -1,45 +1,4 @@
-// Mock data. Bentuknya mengikuti tabel REPORT / NOTIFICATION di README.
-// Nanti tinggal diganti dengan hasil fetch ke API backend (GET /reports, dst).
-
-export type ReportType = "lost" | "found";
-export type ReportStatus = "OPEN" | "CLAIM_PENDING" | "RESOLVED";
-
-export interface Report {
-  id: string;
-  type: ReportType;
-  itemName: string;
-  category: string;
-  description: string;
-  locations: string[]; // nama CAMPUS_LOCATION (LOST: maks 3, FOUND: 1)
-  locationDetail?: string;
-  contact: string;
-  status: ReportStatus;
-  images: string[]; // URL foto (LOST: 0-10, FOUND: minimal 1 di form)
-  eventDate: string; // lost: perkiraan awal hilang, found: waktu ditemukan (ISO)
-  eventUntil?: string; // khusus LOST: perkiraan akhir waktu hilang (ISO)
-  currentPosition?: string; // khusus FOUND
-  createdAt: string; // ISO
-}
-
-export interface AppNotification {
-  id: string;
-  reportId: string;
-  message: string;
-  readAt: string | null;
-  createdAt: string;
-}
-
-// Placeholder sampai backend menetapkan daftar kategori & lokasi.
-export const CATEGORIES = [
-  "Electronics",
-  "Accessories",
-  "Documents",
-  "Bags",
-  "Clothing",
-  "Bottles",
-  "Vehicles",
-  "Others",
-];
+import type { AppNotification, Report } from "./report-data";
 
 interface CampusLocation {
   id: string;
@@ -57,9 +16,7 @@ export const CAMPUS_LOCATIONS: CampusLocation[] = [
   { id: "dc269b55-f4de-4900-97c8-e30ed525a6ac", name: "Parkiran", type: "AREA" },
 ];
 
-export const LOCATIONS = CAMPUS_LOCATIONS.map(({ name }) => name);
-
-export const REPORTS: Report[] = [
+export const REPORTS: Omit<Report, "locationId">[] = [
   {
     id: "1",
     type: "lost",
@@ -206,29 +163,3 @@ export const NOTIFICATIONS: AppNotification[] = [
     createdAt: "2026-11-21T09:05:00.000Z",
   },
 ];
-
-export function getReportById(id: string): Report | undefined {
-  return REPORTS.find((r) => r.id === id);
-}
-
-export function getRecentReports(limit = 4): Report[] {
-  return [...REPORTS]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .slice(0, limit);
-}
-
-// Zona waktu dikunci supaya server & browser menampilkan hasil yang sama.
-export function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("id-ID", {
-    dateStyle: "medium",
-    timeZone: "Asia/Jakarta",
-  }).format(new Date(iso));
-}
-
-export function formatDateTime(iso: string): string {
-  return new Intl.DateTimeFormat("id-ID", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Jakarta",
-  }).format(new Date(iso));
-}

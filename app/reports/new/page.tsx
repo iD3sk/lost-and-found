@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import ReportForm from "@/components/ReportForm";
+import { browserUser } from "@/lib/server/auth/session";
+import { campusLocationOptions } from "@/lib/server/report-views";
 
 type SearchParams = Promise<{ type?: string }>;
 
@@ -24,13 +26,21 @@ async function NewReportContent({ searchParams }: { searchParams: SearchParams }
 
   // Ada ?type=lost atau ?type=found -> langsung tampilkan form
   if (type === "lost" || type === "found") {
+    const user = await browserUser();
+    const locations = user ? await campusLocationOptions() : [];
     return (
       <>
         <PageHeader
           title={type === "lost" ? "Lost Form" : "Found Form"}
           backHref="/home"
         />
-        <ReportForm type={type} />
+        {user && locations.length > 0 ? <ReportForm type={type} locations={locations} /> : (
+          <main className="mx-auto w-full max-w-md px-4 pt-6">
+            {user
+              ? <p className="text-sm text-muted">No campus locations are available.</p>
+              : <a href="/api/v1/auth/sso/login" className="text-sm font-semibold text-link">Sign in to create a report</a>}
+          </main>
+        )}
       </>
     );
   }

@@ -5,10 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Pencil } from "lucide-react";
 import { Field, PhotoPicker, inputClass } from "@/components/FormFields";
 import { StatusPill } from "@/components/ReportBadges";
-import { CATEGORIES, LOCATIONS, type ReportType } from "@/lib/mock-data";
+import { CATEGORIES, type CampusLocationOption, type ReportType } from "@/lib/report-data";
 import {
   CONTACT_METHODS,
-  MAX_LOST_LOCATIONS,
   MAX_PHOTOS,
   MIN_DESCRIPTION_WORDS,
   countWords,
@@ -68,7 +67,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
-export default function ReportForm({ type }: { type: ReportType }) {
+export default function ReportForm({ type, locations }: { type: ReportType; locations: CampusLocationOption[] }) {
   const isLost = type === "lost";
 
   const [step, setStep] = useState(0);
@@ -109,16 +108,6 @@ export default function ReportForm({ type }: { type: ReportType }) {
     setDraft((d) => ({ ...d, photos: d.photos.filter((p) => p.id !== id) }));
   }
 
-  function toggleLocation(l: string) {
-    setDraft((d) => {
-      const has = d.locations.includes(l);
-      if (has) return { ...d, locations: d.locations.filter((x) => x !== l) };
-      if (d.locations.length >= MAX_LOST_LOCATIONS) return d;
-      return { ...d, locations: [...d.locations, l] };
-    });
-    setErrors((e) => (e.locations ? { ...e, locations: undefined } : e));
-  }
-
   function showErrors(found: DraftErrors) {
     setErrors(found);
     requestAnimationFrame(() => {
@@ -154,8 +143,8 @@ export default function ReportForm({ type }: { type: ReportType }) {
     try {
       setResult(await submitReport(type, draft));
       window.scrollTo({ top: 0 });
-    } catch {
-      setSubmitError("Something went wrong while submitting. Please try again.");
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not submit the report. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -298,40 +287,24 @@ export default function ReportForm({ type }: { type: ReportType }) {
       )}
 
       {/* ---------- Step 2: lokasi & waktu ---------- */}
+      {step === 1 && (
+        <Field id="location" label={isLost ? "Last seen at" : "Found at"} error={errors.locationId}>
+          <select
+            id="location"
+            value={draft.locationId}
+            onChange={(e) => update("locationId", e.target.value)}
+            aria-invalid={errors.locationId ? true : undefined}
+            aria-describedby={errors.locationId ? "location-error" : undefined}
+            className={inputClass}
+          >
+            <option value="">Select a location</option>
+            {locations.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+          </select>
+        </Field>
+      )}
+
       {step === 1 && isLost && (
         <>
-          <div data-invalid={errors.locations ? "true" : undefined}>
-            <p className="mb-1 text-lg font-bold">Last seen at</p>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Lokasi terakhir terlihat">
-              {LOCATIONS.map((l) => {
-                const on = draft.locations.includes(l);
-                const blocked = !on && draft.locations.length >= MAX_LOST_LOCATIONS;
-                return (
-                  <button
-                    key={l}
-                    type="button"
-                    aria-pressed={on}
-                    disabled={blocked}
-                    onClick={() => toggleLocation(l)}
-                    className={`min-h-11 rounded-full px-4 font-semibold transition-colors disabled:opacity-40 ${
-                      on ? "bg-primary text-primary-foreground" : "bg-chip-inactive text-foreground/70"
-                    }`}
-                  >
-                    {l}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="mt-1 text-sm text-muted">
-              Pick up to {MAX_LOST_LOCATIONS} places ({draft.locations.length}/{MAX_LOST_LOCATIONS}).
-            </p>
-            {errors.locations ? (
-              <p role="alert" className="mt-1 text-sm font-semibold text-status-lost">
-                {errors.locations}
-              </p>
-            ) : null}
-          </div>
-
           <Field id="lostFrom" label="Possibly lost from" error={errors.lostFrom}>
             <input
               id="lostFrom"
@@ -366,24 +339,6 @@ export default function ReportForm({ type }: { type: ReportType }) {
 
       {step === 1 && !isLost && (
         <>
-          <Field id="location" label="Found at" error={errors.locations}>
-            <select
-              id="location"
-              value={draft.locations[0] ?? ""}
-              onChange={(e) => update("locations", e.target.value ? [e.target.value] : [])}
-              aria-invalid={errors.locations ? true : undefined}
-              aria-describedby={errors.locations ? "location-error" : undefined}
-              className={inputClass}
-            >
-              <option value="">Select a location</option>
-              {LOCATIONS.map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
-          </Field>
-
           <Field id="foundDate" label="Date found" error={errors.foundDate}>
             <input
               id="foundDate"
@@ -497,7 +452,9 @@ export default function ReportForm({ type }: { type: ReportType }) {
           </ReviewSection>
 
           <ReviewSection title="Location & time" onEdit={() => goTo(1)}>
-            <Row label={isLost ? "Last seen at" : "Found at"}>{draft.locations.join(", ")}</Row>
+            <Row label={isLost ? "Last seen at" : "Found at"}>
+              {locations.find(({ id }) => id === draft.locationId)?.name}
+            </Row>
             {isLost ? (
               <Row label="Possibly lost">
                 {fmtLocal(draft.lostFrom)}

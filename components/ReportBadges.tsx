@@ -1,4 +1,4 @@
-import type { Report, ReportType } from "@/lib/mock-data";
+import type { Report, ReportType } from "@/lib/report-data";
 
 export function TypeBadge({
   type,

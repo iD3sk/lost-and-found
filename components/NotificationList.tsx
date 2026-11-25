@@ -3,28 +3,35 @@
 import Link from "next/link";
 import { useState } from "react";
 import { BellOff, CheckCheck } from "lucide-react";
-import { formatDateTime, type AppNotification } from "@/lib/mock-data";
+import { formatDateTime, type AppNotification } from "@/lib/report-data";
 
 export default function NotificationList({
   initial,
 }: {
   initial: AppNotification[];
 }) {
-  // Nanti: ambil dari GET /notifications dan kirim PATCH /notifications/:id/read
-  const [items, setItems] = useState(initial);
+  const [readTimes, setReadTimes] = useState<Record<string, string>>({});
+  const [markingAll, setMarkingAll] = useState(false);
+  const [error, setError] = useState("");
+  const items = initial.map((item) => ({ ...item, readAt: item.readAt ?? readTimes[item.id] ?? null }));
   const unread = items.filter((n) => !n.readAt).length;
 
-  function markRead(id: string) {
-    setItems((prev) =>
-      prev.map((n) =>
-        n.id === id && !n.readAt ? { ...n, readAt: new Date().toISOString() } : n,
-      ),
-    );
+  async function markRead(id: string) {
+    try {
+      const response = await fetch(`/api/v1/notifications/${id}/read`, { method: "PATCH", keepalive: true });
+      if (!response.ok) throw new Error();
+      const { readAt } = await response.json() as { readAt: string };
+      setReadTimes((previous) => ({ ...previous, [id]: readAt }));
+    } catch {
+      setError("Could not update the notification. Please try again.");
+    }
   }
 
-  function markAllRead() {
-    const now = new Date().toISOString();
-    setItems((prev) => prev.map((n) => (n.readAt ? n : { ...n, readAt: now })));
+  async function markAllRead() {
+    setMarkingAll(true);
+    setError("");
+    await Promise.all(items.filter((item) => !item.readAt).map((item) => markRead(item.id)));
+    setMarkingAll(false);
   }
 
   if (items.length === 0) {
@@ -48,13 +55,14 @@ export default function NotificationList({
         <button
           type="button"
           onClick={markAllRead}
-          disabled={unread === 0}
+          disabled={unread === 0 || markingAll}
           className="flex min-h-11 items-center gap-1.5 text-sm font-semibold text-link disabled:opacity-40"
         >
           <CheckCheck size={18} aria-hidden="true" />
           Mark all as read
         </button>
       </div>
+      {error && <p role="alert" className="mt-1 text-sm text-muted">{error}</p>}
 
       <ul className="mt-1 flex flex-col gap-3">
         {items.map((n) => {
@@ -63,7 +71,9 @@ export default function NotificationList({
             <li key={n.id}>
               <Link
                 href={`/reports/${n.reportId}`}
-                onClick={() => markRead(n.id)}
+                onClick={() => {
+                  if (isUnread) void markRead(n.id);
+                }}
                 className={`flex items-start gap-3 rounded-3xl p-4 shadow-md active:scale-[0.98] ${
                   isUnread ? "bg-card" : "bg-card/60"
                 }`}

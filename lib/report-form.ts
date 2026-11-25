@@ -1,8 +1,7 @@
-import type { ReportType } from "@/lib/mock-data";
+import type { ReportType } from "@/lib/report-data";
 
 export const MIN_DESCRIPTION_WORDS = 15;
 export const MAX_PHOTOS = 10;
-export const MAX_LOST_LOCATIONS = 3;
 export const MAX_FILE_MB = 5; // batas per foto, sesuaikan dengan backend/Cloudinary
 export const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg"];
 export const CONTACT_METHODS = ["WhatsApp", "LINE", "Instagram", "E-mail"] as const;
@@ -18,7 +17,7 @@ export interface ReportDraft {
   category: string;
   description: string;
   photos: PhotoItem[];
-  locations: string[]; // lost: 1-3, found: tepat 1
+  locationId: string;
   lostFrom: string; // datetime-local
   lostUntil: string; // datetime-local (opsional)
   foundDate: string; // yyyy-mm-dd
@@ -35,7 +34,7 @@ export const emptyDraft: ReportDraft = {
   category: "",
   description: "",
   photos: [],
-  locations: [],
+  locationId: "",
   lostFrom: "",
   lostUntil: "",
   foundDate: "",
@@ -49,8 +48,12 @@ export function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function campusDateTime(value: string) {
+  return new Date(`${value}+07:00`);
+}
+
 function isFuture(value: string): boolean {
-  const t = new Date(value).getTime();
+  const t = campusDateTime(value).getTime();
   return !Number.isNaN(t) && t > Date.now();
 }
 
@@ -75,22 +78,21 @@ export function validateStep(
   }
 
   if (step === 1) {
+    if (!d.locationId) e.locationId = "Choose a location.";
     if (type === "lost") {
-      if (d.locations.length < 1) e.locations = "Pick at least 1 location.";
       if (!d.lostFrom) {
         e.lostFrom = "Choose when it may have been lost.";
       } else if (isFuture(d.lostFrom)) {
         e.lostFrom = "This time cannot be in the future.";
       }
       if (d.lostUntil) {
-        if (d.lostFrom && new Date(d.lostUntil) < new Date(d.lostFrom)) {
+        if (d.lostFrom && campusDateTime(d.lostUntil) < campusDateTime(d.lostFrom)) {
           e.lostUntil = "The end time must be after the start time.";
         } else if (isFuture(d.lostUntil)) {
           e.lostUntil = "This time cannot be in the future.";
         }
       }
     } else {
-      if (d.locations.length !== 1) e.locations = "Choose where you found it.";
       if (!d.foundDate) {
         e.foundDate = "Choose the date you found it.";
       } else if (isFuture(`${d.foundDate}T${d.foundTime || "00:00"}`)) {
@@ -127,11 +129,11 @@ export function buildFormData(type: ReportType, d: ReportDraft): FormData {
   fd.append("category", d.category);
   fd.append("description", d.description.trim());
   fd.append("contact", `${d.contactMethod}: ${d.contactValue.trim()}`);
-  d.locations.forEach((l) => fd.append("locations", l));
+  fd.append("locationId", d.locationId);
 
   if (type === "lost") {
-    fd.append("lostFrom", new Date(d.lostFrom).toISOString());
-    if (d.lostUntil) fd.append("lostUntil", new Date(d.lostUntil).toISOString());
+    fd.append("lostFrom", campusDateTime(d.lostFrom).toISOString());
+    if (d.lostUntil) fd.append("lostUntil", campusDateTime(d.lostUntil).toISOString());
   } else {
     fd.append("foundDate", d.foundDate);
     if (d.foundTime) fd.append("foundTime", d.foundTime);
@@ -143,26 +145,21 @@ export function buildFormData(type: ReportType, d: ReportDraft): FormData {
 }
 
 export interface SubmitResult {
-  id?: string;
+  id: string;
   status: "OPEN" | "CLAIM_PENDING" | "RESOLVED";
 }
 
-/**
- * TODO (checkpoint 3): ganti simulasi ini dengan request asli, mis.
- *
- *   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports`, {
- *     method: "POST",
- *     body: buildFormData(type, draft),   // jangan set Content-Type manual
- *   });
- *   if (!res.ok) throw new Error("Failed to submit report");
- *   return res.json();
- */
 export async function submitReport(
   type: ReportType,
   draft: ReportDraft,
 ): Promise<SubmitResult> {
-  const body = buildFormData(type, draft);
-  console.log("submit report", Object.fromEntries(body.entries()));
-  await new Promise((r) => setTimeout(r, 800));
-  return { status: "OPEN" };
+  const response = await fetch("/api/v1/reports", { method: "POST", body: buildFormData(type, draft) });
+  const result = await response.json().catch(() => null);
+  if (!response.ok || typeof result?.id !== "string" ||
+      !["OPEN", "CLAIM_PENDING", "RESOLVED"].includes(result.status)) {
+    throw new Error(response.status === 401
+      ? "Sign in with SSO UI to submit a report."
+      : typeof result?.error === "string" ? result.error : "Could not submit the report. Please try again.");
+  }
+  return result;
 }

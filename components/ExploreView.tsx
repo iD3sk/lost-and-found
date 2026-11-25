@@ -5,23 +5,21 @@ import { Filter, Search, SearchX } from "lucide-react";
 import ReportCard from "@/components/ReportCard";
 import {
   CATEGORIES,
-  LOCATIONS,
+  type CampusLocationOption,
   type Report,
   type ReportType,
-} from "@/lib/mock-data";
+} from "@/lib/report-data";
 
 const fieldClass =
   "w-full rounded-full border-4 border-border-soft bg-background px-4 py-2 focus:border-primary focus:outline-none";
 
-export default function ExploreView({ reports }: { reports: Report[] }) {
+export default function ExploreView({ reports, locations }: { reports: Report[]; locations: CampusLocationOption[] }) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState<ReportType | null>(null);
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  // Filter di sisi client untuk mock data.
-  // Nanti kirim query/type/category/locationId sebagai query param ke GET /reports.
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return reports.filter(
@@ -29,7 +27,7 @@ export default function ExploreView({ reports }: { reports: Report[] }) {
         (!q || r.itemName.toLowerCase().includes(q)) &&
         (!type || r.type === type) &&
         (!category || r.category === category) &&
-        (!location || r.locations.includes(location)),
+        (!location || r.locationId === location),
     );
   }, [reports, query, type, category, location]);
 
@@ -130,9 +128,9 @@ export default function ExploreView({ reports }: { reports: Report[] }) {
               className={fieldClass}
             >
               <option value="">All locations</option>
-              {LOCATIONS.map((l) => (
-                <option key={l} value={l}>
-                  {l}
+              {locations.map(({ id, name }) => (
+                <option key={id} value={id}>
+                  {name}
                 </option>
               ))}
             </select>

@@ -1,8 +1,9 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import ReportCard from "@/components/ReportCard";
-import { getRecentReports } from "@/lib/mock-data";
-import BottomNav from "@/components/BottomNav"
+import BottomNav from "@/components/BottomNav";
+import { listReportViews } from "@/lib/server/report-views";
 
 function SadFace() {
   return (
@@ -48,9 +49,18 @@ function ActionCard({
   );
 }
 
-export default function HomePage() {
-  const recent = getRecentReports(4);
+async function RecentReports() {
+  const reports = await listReportViews(undefined, 4);
+  if (!reports.length) return <p className="mt-3 text-sm text-muted">No reports yet.</p>;
 
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+      {reports.map((report) => <ReportCard key={report.id} report={report} />)}
+    </div>
+  );
+}
+
+export default function HomePage() {
   return (
     <>
       <PageHeader title="Lost & Found" brand />
@@ -77,11 +87,9 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {recent.map((r) => (
-            <ReportCard key={r.id} report={r} />
-          ))}
-        </div>
+        <Suspense fallback={<p className="mt-3 text-sm text-muted">Loading reports…</p>}>
+          <RecentReports />
+        </Suspense>
       </main>
       <BottomNav />
     </>

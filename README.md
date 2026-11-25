@@ -264,6 +264,8 @@ NPM dan nama berasal dari respons validasi tiket. Fakultas dan prodi dipetakan d
 2. Jalankan `npx prisma migrate dev` dan `npm run db:seed` untuk membuat tabel dan mengisi katalog lokasi.
 3. Untuk operasi yang membutuhkan akun, isi `DEV_AUTH_NPM` dengan identitas akun uji dan `DEV_AUTH_TOKEN` dengan token acak. Jalankan ulang `npm run db:seed` untuk membuat akun uji, lalu kirim header `Authorization: Bearer <DEV_AUTH_TOKEN>`. Mekanisme ini hanya aktif saat `npm run dev`.
 
+Jalankan `npm run db:seed:demo` untuk mengisi PostgreSQL lokal dengan laporan dan notifikasi demo. Home dan Explore menampilkan laporan demo dari database. My Reports dan Notifications menampilkan data milik akun yang sedang login. Notifikasi demo diberikan ke akun uji development.
+
 Pembuatan laporan memakai `multipart/form-data` dengan `locationId` dari katalog, satu lokasi per laporan, dan field `images` yang dapat diulang. Upload tambahan memakai field `images` yang sama. Foto harus PNG atau JPEG, maksimal 5 MiB per file dan 10 foto per laporan. Laporan FOUND harus menyimpan minimal satu foto. File disimpan di `.report-uploads/` secara lokal atau di direktori persisten dari `REPORT_UPLOAD_DIR`.
 
 Operasi PATCH dan pembuatan komentar memakai JSON. Filter tanggal dan jam menggunakan WIB. Laporan FOUND baru membuat satu notifikasi per pengguna dengan laporan LOST berstatus OPEN yang cocok pada nama barang, kategori, dan lokasi kampus.

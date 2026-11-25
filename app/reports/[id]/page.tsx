@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { Calendar, MapPin, MessageCircle, Package } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { StatusPill, TypeBadge } from "@/components/ReportBadges";
-import { formatDateTime, getReportById } from "@/lib/mock-data";
+import { formatDate, formatDateTime } from "@/lib/report-data";
+import { findReportView } from "@/lib/server/report-views";
 
 type Params = Promise<{ id: string }>;
 
@@ -38,7 +39,7 @@ function InfoRow({
 
 async function ReportDetail({ params }: { params: Params }) {
   const { id } = await params;
-  const report = getReportById(id);
+  const report = await findReportView(id);
   if (!report) notFound();
 
   const isLost = report.type === "lost";
@@ -95,7 +96,7 @@ async function ReportDetail({ params }: { params: Params }) {
             icon={<Calendar size={20} aria-hidden="true" />}
             label={isLost ? "Possibly lost" : "Found on"}
           >
-            {formatDateTime(report.eventDate)}
+            {report.eventTimeKnown === false ? formatDate(report.eventDate) : formatDateTime(report.eventDate)}
             {isLost && report.eventUntil ? ` – ${formatDateTime(report.eventUntil)}` : ""}
           </InfoRow>
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
-import type { Report } from "@/lib/mock-data";
+import type { Report } from "@/lib/report-data";
 import { StatusPill, TypeBadge } from "@/components/ReportBadges";
 
 // Pemakaian: <ReportCard report={r} />  (BUKAN id/title/location terpisah)
