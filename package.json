@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:seed:demo": "prisma db seed -- --demo"
   },
   "dependencies": {
     "@pipl-csui/sso-ui.js": "0.0.1",
