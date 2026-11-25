@@ -190,13 +190,14 @@ Relationships:
 
 Notes:
 - Category menggunakan enum di REPORT, sehingga tidak membutuhkan tabel terpisah.
-- Daftar ini merupakan rancangan data; implementasi dan mapping Prisma dilakukan pada tahap berikutnya.
+- Mapping model Prisma ada di `prisma/schema.prisma`.
 
 ## Search/Filter Query Parameters
 
 Semua query parameter bersifat opsional.
 
 - `keyword`: String - mencari nama barang pada field itemName.
+- `type`: Enum(LOST, FOUND) - memfilter jenis laporan.
 - `status`: Enum(OPEN, CLAIM_PENDING, RESOLVED) - memfilter status penanganan laporan.
 - `category`: Enum - memfilter kategori barang; pilihan kategori ditentukan nanti.
 - `dateFrom`: Date (YYYY-MM-DD) - batas awal tanggal kejadian.
@@ -212,7 +213,7 @@ Notes:
 
 ## REST API Endpoints
 
-Rancangan endpoint dengan base path `/api/v1`.
+Endpoint dengan base path `/api/v1`.
 
 ### Profile
 
@@ -229,6 +230,7 @@ Rancangan endpoint dengan base path `/api/v1`.
 ### Report Images
 
 - `POST /api/v1/reports/{reportId}/images` - menambahkan foto pada laporan sendiri.
+- `GET /api/v1/reports/{reportId}/images/{imageId}` - mengambil file foto laporan.
 - `DELETE /api/v1/reports/{reportId}/images/{imageId}` - menghapus foto pada laporan sendiri.
 
 ### Campus Locations
@@ -248,3 +250,13 @@ Rancangan endpoint dengan base path `/api/v1`.
 ### Authentication
 
 - Endpoint login/logout belum ditentukan karena provider dan mekanisme SSO belum dipilih.
+
+### Menjalankan API dengan PostgreSQL lokal
+
+1. Jalankan `npm ci`, lalu isi `DATABASE_URL` di `.env` dengan URL database development. Isi juga `SHADOW_DATABASE_URL` jika memakai shadow database terpisah.
+2. Jalankan `npx prisma migrate dev` dan `npm run db:seed` untuk membuat tabel dan mengisi katalog lokasi.
+3. Untuk operasi yang membutuhkan akun, isi `DEV_AUTH_NPM` dengan identitas akun uji dan `DEV_AUTH_TOKEN` dengan token acak. Jalankan ulang `npm run db:seed` untuk membuat akun uji, lalu kirim header `Authorization: Bearer <DEV_AUTH_TOKEN>`. Mekanisme ini hanya aktif saat `npm run dev`.
+
+Pembuatan laporan memakai `multipart/form-data` dengan `locationId` dari katalog, satu lokasi per laporan, dan field `images` yang dapat diulang. Upload tambahan memakai field `images` yang sama. Foto harus PNG atau JPEG, maksimal 5 MiB per file dan 10 foto per laporan. Laporan FOUND harus menyimpan minimal satu foto. File disimpan di `.report-uploads/` secara lokal atau di direktori persisten dari `REPORT_UPLOAD_DIR`.
+
+Operasi PATCH dan pembuatan komentar memakai JSON. Filter tanggal dan jam menggunakan WIB. Laporan FOUND baru membuat satu notifikasi per pengguna dengan laporan LOST berstatus OPEN yang cocok pada nama barang, kategori, dan lokasi kampus.
