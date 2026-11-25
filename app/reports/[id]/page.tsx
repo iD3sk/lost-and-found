@@ -1,9 +1,11 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, MapPin, MessageCircle, Package } from "lucide-react";
+import { Calendar, MapPin, MessageCircle, Package, Pencil } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import { StatusPill, TypeBadge } from "@/components/ReportBadges";
 import { formatDate, formatDateTime } from "@/lib/report-data";
+import { browserUser } from "@/lib/server/auth/session";
 import { findReportView } from "@/lib/server/report-views";
 
 type Params = Promise<{ id: string }>;
@@ -39,7 +41,7 @@ function InfoRow({
 
 async function ReportDetail({ params }: { params: Params }) {
   const { id } = await params;
-  const report = await findReportView(id);
+  const [report, user] = await Promise.all([findReportView(id), browserUser()]);
   if (!report) notFound();
 
   const isLost = report.type === "lost";
@@ -114,6 +116,12 @@ async function ReportDetail({ params }: { params: Params }) {
         <p className="mt-4 text-xs text-muted">
           Posted {formatDateTime(report.createdAt)}
         </p>
+        {user?.npm === report.ownerNpm && (
+          <Link href={`/reports/${report.id}/edit`} className="mt-2 inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-primary px-4 text-sm font-semibold text-primary">
+            <Pencil size={16} aria-hidden="true" />
+            Edit report
+          </Link>
+        )}
       </main>
     </>
   );

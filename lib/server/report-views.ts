@@ -49,7 +49,7 @@ export async function findReportView(id: string) {
   if (!/^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i.test(id)) return null;
   await connection();
   const row = await getDb().report.findUnique({ where: { id }, include: reportRelations });
-  return row ? reportView(row) : null;
+  return row ? { ...reportView(row), ownerNpm: row.userNpm } : null;
 }
 
 export async function campusLocationOptions() {
