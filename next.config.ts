@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  logging: { incomingRequests: { ignore: [/\/api\/v1\/auth\/sso\/callback/] } },
   turbopack: {
     rules: {
       "*.css": {

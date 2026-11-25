@@ -3,7 +3,7 @@ this is a description of the webapp
 
 ## A. Define App pages, Features, and Team Responsibilities
 ### Application Pages
-1. Register/Login with SSO
+1. Register/Login with SSO UI (CAS2)
 2. Profile (Name, Faculty, Major, NPM, Contacts)
 3. Home (choose whether you’ve lost/found something)
 4. Lost (Fill a form of what you have lost)
@@ -249,7 +249,14 @@ Endpoint dengan base path `/api/v1`.
 
 ### Authentication
 
-- Endpoint login/logout belum ditentukan karena provider dan mekanisme SSO belum dipilih.
+- `GET /api/v1/auth/sso/login` - memulai login melalui SSO UI.
+- `GET /api/v1/auth/sso/callback` - memvalidasi tiket CAS2 dan membuka sesi aplikasi.
+- `POST /api/v1/auth/sso/complete` - memilih prodi jika kode SSO hanya mengidentifikasi fakultas.
+- `POST /api/v1/auth/logout` - mencabut sesi aplikasi dan menghapus cookie.
+
+Untuk pengembangan, callback default adalah `http://localhost:3000/api/v1/auth/sso/callback`. Untuk deployment, set `SSO_SERVICE_URL` ke URL HTTPS callback aplikasi. CAS UI harus menerima URL service tersebut dengan query `state` yang dibuat untuk tiap login. Jalankan migrasi Prisma sebelum memakai SSO.
+
+NPM dan nama berasal dari respons validasi tiket. Fakultas dan prodi dipetakan dari `kd_org` memakai salinan lokal [katalog kode organisasi UI](https://git.fossy.my.id/femboy/kd_org/raw/branch/master/code.json). Sesi disimpan di PostgreSQL dan endpoint privat membaca cookie sesi. Logout mengakhiri sesi aplikasi.
 
 ### Menjalankan API dengan PostgreSQL lokal
 

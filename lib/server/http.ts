@@ -1,5 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
+import { connection } from "next/server";
 import { Prisma } from "@/generated/prisma/client";
+import { matchesAppOrigin, requestToken, sessionUser } from "./auth/session";
 import { getDb } from "./db";
 
 export class ApiError extends Error {
@@ -10,6 +12,7 @@ export class ApiError extends Error {
 
 export function api<Args extends unknown[]>(handler: (...args: Args) => Promise<Response>) {
   return async (...args: Args): Promise<Response> => {
+    await connection();
     try {
       return await handler(...args);
     } catch (error) {
@@ -30,7 +33,15 @@ export function api<Args extends unknown[]>(handler: (...args: Args) => Promise<
   };
 }
 
-export async function requireUser(request: Request) {
+export async function requireIdentity(request: Request) {
+  const session = await sessionUser(requestToken(request, "session"));
+  if (session) {
+    if (!["GET", "HEAD", "OPTIONS"].includes(request.method) && !matchesAppOrigin(request)) {
+      throw new ApiError(403, "Request origin is not allowed.");
+    }
+    return { user: session, sso: true };
+  }
+
   const npm = process.env.DEV_AUTH_NPM;
   const token = process.env.DEV_AUTH_TOKEN;
   if (process.env.NODE_ENV === "development" && npm && token) {
@@ -38,11 +49,15 @@ export async function requireUser(request: Request) {
     const authorization = Buffer.from(request.headers.get("authorization") ?? "");
     if (authorization.length === expected.length && timingSafeEqual(authorization, expected)) {
       const user = await getDb().user.findUnique({ where: { npm } });
-      if (user) return user;
+      if (user) return { user, sso: false };
     }
   }
 
   throw new ApiError(401, "Authentication required.");
+}
+
+export async function requireUser(request: Request) {
+  return (await requireIdentity(request)).user;
 }
 
 export function uuid(value: unknown, field: string): string {

@@ -1,5 +1,5 @@
 import { getDb } from "@/lib/server/db";
-import { ApiError, allowFields, api, jsonBody, optionalText, requiredText, requireUser } from "@/lib/server/http";
+import { ApiError, allowFields, api, jsonBody, optionalText, requiredText, requireIdentity, requireUser } from "@/lib/server/http";
 
 export const GET = api(async (request: Request) => {
   const user = await requireUser(request);
@@ -7,10 +7,13 @@ export const GET = api(async (request: Request) => {
 });
 
 export const PATCH = api(async (request: Request) => {
-  const { npm } = await requireUser(request);
+  const { user: { npm }, sso } = await requireIdentity(request);
   const data = await jsonBody(request);
   allowFields(data, ["name", "fakultas", "major", "contact"]);
   if (!Object.keys(data).length) throw new ApiError(400, "Provide at least one profile field.");
+  if (sso && ["name", "fakultas", "major"].some((field) => field in data)) {
+    throw new ApiError(403, "Student details are managed through SSO UI.");
+  }
 
   const user = await getDb().user.update({
     where: { npm },

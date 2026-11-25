@@ -1,10 +1,21 @@
-'use client';
+import { Suspense } from "react";
 
-import { useRouter } from 'next/navigation';
+type SearchParams = Promise<{ sso?: string | string[] }>;
 
-export default function LoginPage() {
-  const router = useRouter();
+async function SsoFeedback({ searchParams }: { searchParams: SearchParams }) {
+  const { sso } = await searchParams;
+  const message = sso === "expired"
+    ? "Your sign-in expired. Please try again."
+    : sso === "unsupported"
+      ? "We could not match this SSO account to a UI student profile."
+      : sso === "failed"
+        ? "SSO sign-in failed. Please try again."
+        : null;
 
+  return message ? <p role="alert" className="text-center text-sm text-foreground">{message}</p> : null;
+}
+
+export default function LoginPage({ searchParams }: { searchParams: SearchParams }) {
   return (
     <main className="min-h-dvh bg-background flex flex-col justify-center items-center px-9 gap-12">
       {/* Top Section: Magnifying Glass Logo + "Lost & Found" */}
@@ -51,30 +62,15 @@ export default function LoginPage() {
 
       {/* Bottom Section: Action Buttons */}
       <div className="w-full max-w-[240px] flex flex-col items-center gap-3.5">
-        <button
-          onClick={() => router.push('/home')}
-          className="w-full py-3.5 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-medium cursor-pointer active:scale-98 transition"
+        <a
+          href="/api/v1/auth/sso/login"
+          className="flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
-          Login with SSO
-        </button>
-
-        <button
-          onClick={() => router.push('/login-regis-form')}
-          className="w-full py-3.5 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-medium cursor-pointer active:scale-98 transition"
-        >
-          Login
-        </button>
-
-        <p className="mt-1.5 -mb-1.5 text-xs text-link font-medium">
-          Don&apos;t have an account yet?
-        </p>
-
-        <button
-          onClick={() => router.push('/register')}
-          className="w-full py-3.5 px-5 bg-primary text-primary-foreground rounded-xl text-sm font-medium cursor-pointer active:scale-98 transition"
-        >
-          Register
-        </button>
+          Sign in with SSO UI
+        </a>
+        <Suspense>
+          <SsoFeedback searchParams={searchParams} />
+        </Suspense>
       </div>
     </main>
   );

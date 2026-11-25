@@ -44,8 +44,30 @@ model User {
   reports       Report[]
   comments      Comment[]
   notifications Notification[]
+  sessions      Session[]
 
   @@map("USER")
+}
+
+model Session {
+  tokenHash String   @id @db.Char(64)
+  userNpm   String
+  expiresAt DateTime
+  user      User     @relation(fields: [userNpm], references: [npm], onDelete: Cascade)
+
+  @@index([userNpm, expiresAt])
+  @@map("SESSION")
+}
+
+model PendingSsoProfile {
+  tokenHash  String   @id @db.Char(64)
+  userNpm    String
+  name       String
+  facultyCode String
+  expiresAt  DateTime
+
+  @@index([userNpm, expiresAt])
+  @@map("PENDING_SSO_PROFILE")
 }
 
 model Report {
